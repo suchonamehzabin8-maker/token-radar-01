@@ -1,0 +1,166 @@
+/* Token Radar's dashboard: a dark radar room. Deep ink panels, one amber accent, type that
+   reads at a glance. No network, no framework, no images: every rule here is local. */
+:root {
+  --ink: #0b1220;
+  --panel: #111a2e;
+  --panel-2: #16223a;
+  --line: #22304f;
+  --text: #e8eef7;
+  --muted: #93a3bd;
+  --faint: #6b7d9c;
+  --accent: #f5b942;
+  --accent-ink: #1a1405;
+  --green: #3ddc97;
+  --red: #ff6b6b;
+  --blue: #6ea8fe;
+  --radius: 12px;
+}
+* { box-sizing: border-box; }
+html { color-scheme: dark; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+.skip {
+  position: absolute; left: -999px; top: 0;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 8px 14px; border-radius: 0 0 8px 0; font-weight: 700; z-index: 10;
+}
+.skip:focus { left: 0; }
+.shell { max-width: 1180px; margin: 0 auto; padding: 28px 20px 48px; }
+.top {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  align-items: center; justify-content: space-between;
+  padding-bottom: 18px; border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.mark { flex: none; }
+.brand-name { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.top-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 13px; }
+.top-meta span + span::before { content: "·"; margin-right: 18px; color: var(--faint); }
+.lede {
+  display: grid; grid-template-columns: 1.5fr 1fr; gap: 28px;
+  padding: 26px 0 22px; align-items: start;
+}
+.lede h1 { font-size: 30px; line-height: 1.2; letter-spacing: -0.02em; margin: 0 0 10px; }
+.lede p { margin: 0; color: var(--muted); max-width: 56ch; }
+.facts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fact {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.fact span { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.fact b { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+.controls {
+  display: flex; flex-wrap: wrap; gap: 14px; align-items: end;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 14px 16px; margin-bottom: 16px;
+}
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label, .field .sub { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.field input[type="search"], .field select {
+  background: var(--ink); color: var(--text); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 11px; font: inherit; min-width: 220px;
+}
+.field input[type="search"]:focus, .field select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.tabs { display: flex; gap: 6px; }
+.tabs button, .button {
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--line);
+  border-radius: 8px; padding: 9px 14px; font: inherit; cursor: pointer;
+}
+.tabs button[aria-pressed="true"], .button.primary {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 700;
+}
+.count { margin-left: auto; color: var(--muted); font-size: 13px; padding-bottom: 9px; }
+.panel {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  margin-bottom: 16px; overflow: hidden;
+}
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+caption { text-align: left; padding: 14px 16px 4px; color: var(--muted); font-size: 13px; }
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th button {
+  background: none; border: 0; color: var(--muted); font: inherit; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .06em; cursor: pointer; padding: 0;
+}
+th button:hover { color: var(--text); }
+tbody tr { cursor: pointer; }
+tbody tr:hover, tbody tr:focus { background: var(--panel-2); }
+tbody tr[data-selected="true"] { background: var(--panel-2); box-shadow: inset 3px 0 0 var(--accent); }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+td .name b { display: block; font-size: 14px; }
+td .name .sub { color: var(--muted); font-size: 12px; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+.implied { display: flex; flex-direction: column; gap: 4px; min-width: 150px; }
+.implied .bar { height: 5px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.implied .bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.implied .num { font-weight: 700; font-variant-numeric: tabular-nums; }
+.status {
+  display: inline-block; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px; color: var(--muted);
+}
+.status.watch { color: var(--accent); border-color: var(--accent); }
+.status.early { color: var(--blue); border-color: var(--blue); }
+.empty { padding: 28px 20px; text-align: center; }
+.empty h2 { margin: 0 0 6px; font-size: 18px; }
+.empty p { margin: 0 0 14px; color: var(--muted); }
+.model { padding: 20px 22px; }
+.model h2 { margin: 0 0 8px; font-size: 20px; letter-spacing: -0.01em; }
+.model h3 { margin: 22px 0 8px; font-size: 15px; }
+.model p { margin: 0 0 12px; }
+.sub { color: var(--muted); font-size: 13px; }
+.formula {
+  background: var(--ink); border: 1px solid var(--line); border-radius: 8px;
+  padding: 14px 16px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px; line-height: 1.6; overflow-x: auto; margin-bottom: 6px;
+}
+.calibration td.num, .calibration th { text-align: right; }
+.calibration th:first-child, .calibration td:first-child { text-align: left; }
+.calibration td { font-variant-numeric: tabular-nums; }
+.sandbox { display: flex; flex-wrap: wrap; gap: 18px; align-items: end; }
+.sandbox label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.sandbox output { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+.sandbox input[type="range"] { width: 200px; accent-color: var(--accent); }
+.foot { color: var(--muted); font-size: 13px; padding: 6px 2px; }
+.foot p { margin: 0 0 8px; max-width: 90ch; }
+.detail {
+  background: var(--panel); color: var(--text); border: 1px solid var(--line);
+  border-radius: 14px; padding: 0; width: min(680px, 94vw); max-height: 88vh; overflow-y: auto;
+}
+.detail::backdrop { background: rgba(4, 8, 16, 0.72); }
+.detail-head {
+  display: flex; justify-content: space-between; gap: 16px; align-items: start;
+  padding: 20px 22px 0;
+}
+.detail-head h2 { margin: 4px 0 6px; font-size: 24px; letter-spacing: -0.02em; }
+.detail-head .sub { margin: 0; }
+.close {
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 12px; font: inherit; cursor: pointer; flex: none;
+}
+.detail-section { padding: 16px 22px 20px; }
+.detail-section h3 { margin: 0 0 10px; font-size: 15px; }
+.equation { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 12px; }
+.equation > div {
+  display: flex; justify-content: space-between; gap: 12px;
+  background: var(--ink); border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px;
+}
+.equation span { color: var(--muted); font-size: 13px; }
+.equation b { font-variant-numeric: tabular-nums; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+.steps li::marker { color: var(--accent); font-weight: 700; }
+.steps b { display: block; font-weight: 600; }
+.steps .cost { color: var(--muted); font-size: 13px; }
+.badge-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+@media (max-width: 760px) {
+  .lede { grid-template-columns: 1fr; }
+  .lede h1 { font-size: 24px; }
+  .equation { grid-template-columns: 1fr; }
+  .field input[type="search"], .field select { min-width: 0; width: 100%; }
+}
