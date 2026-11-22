@@ -1,137 +1,100 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Radar — the pre-token launch board</title>
+<title>Token Radar — pre-token launch radar</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<header class="masthead">
-  <div class="masthead-inner">
-    <p class="eyebrow">Token Radar · radar-3-calibrated</p>
-    <h1 id="lede-title">Which protocol launches the next big token?</h1>
-    <p class="lede">Every protocol in the snapshot that records no token, ranked by what its token would be worth if the record stayed as it is. Implied value ranks — it does not price. Built from the 14 November 2026 snapshot of 758 DefiLlama protocols.</p>
-    <dl class="stats" id="stats">
-      <div><dt>Board rows</dt><dd id="stat-rows">—</dd></div>
-      <div><dt>Watchlist</dt><dd id="stat-watch">—</dd></div>
-      <div><dt>Global median</dt><dd id="stat-median">—</dd></div>
-      <div><dt>Typical miss</dt><dd id="stat-miss">—</dd></div>
-    </dl>
+<header class="top">
+  <div>
+    <h1>TOKEN RADAR</h1>
+    <p class="sub">radar-3-calibrated &middot; snapshot 14 November 2026 &middot; 758 protocols &middot; 198 pre-token rows</p>
+    <p class="note">Implied value ranks — it does not price. A token's implied value is the model's claim from TVL, growth and age, never a prediction that a token will launch.</p>
+  </div>
+  <div class="model-card">
+    <div><span>Global median</span><strong id="gmed">—</strong></div>
+    <div><span>Typical miss</span><strong id="miss">—</strong></div>
+    <div><span>Validation (5-fold)</span><strong id="val">—</strong></div>
   </div>
 </header>
 
+<section class="strip" id="top10" aria-label="Top ten"></section>
+
+<section class="sandbox">
+  <h2>Model sandbox</h2>
+  <p>Move the sliders and the board recomputes live from the snapshot figures. Rank 1 now: <strong id="rank1live">—</strong></p>
+  <label>Growth weight <input type="range" id="gw" min="0" max="1.5" step="0.05" value="0.6"> <output id="gwv">0.60</output></label>
+  <label>Maturity floor <input type="range" id="mf" min="0" max="0.9" step="0.05" value="0.6"> <output id="mfv">0.60</output></label>
+  <button id="reset" type="button">Reset</button>
+</section>
+
+<nav class="controls">
+  <div class="tabs" role="tablist">
+    <button id="tabPre" role="tab" aria-selected="true" type="button">Pre-token <span id="countPre"></span></button>
+    <button id="tabLive" role="tab" aria-selected="false" type="button">Live tokens <span id="countLive"></span></button>
+  </div>
+  <input id="q" type="search" placeholder="Search name or slug…" aria-label="Search">
+  <select id="cat" aria-label="Category"><option value="">All categories</option></select>
+  <select id="chain" aria-label="Chain"><option value="">All chains</option></select>
+  <label class="wl"><input id="wl" type="checkbox"> Watchlist only</label>
+</nav>
+
 <main>
-  <section class="strip-section" aria-label="Top ten">
-    <h2>Top ten by implied value</h2>
-    <ol id="top10" class="top10"></ol>
-  </section>
-
-  <section class="controls" aria-label="Filters">
-    <div class="control-row">
-      <label>Search <input id="q" type="search" placeholder="Protocol name or slug" autocomplete="off"></label>
-      <label>Category <select id="category"><option value="">All categories</option></select></label>
-      <label>Chain <select id="chain"><option value="">All chains</option></select></label>
-      <label class="check"><input id="watch" type="checkbox"> Watchlist only</label>
-    </div>
-    <div class="tabs" role="tablist" aria-label="Board tabs">
-      <button id="tab-pre" role="tab" aria-selected="true" class="tab active">Pre-token board</button>
-      <button id="tab-live" role="tab" aria-selected="false" class="tab">Live-token comparison</button>
-    </div>
-    <p class="count-line"><span id="count">—</span></p>
-  </section>
-
-  <section class="board-section" aria-label="Board">
-    <table class="board">
-      <thead>
-        <tr>
-          <th><button class="sort" data-sort="rank">Rank</button></th>
-          <th><button class="sort" data-sort="name">Protocol</button></th>
-          <th><button class="sort" data-sort="category">Category</button></th>
-          <th><button class="sort" data-sort="chains">Chains</button></th>
-          <th class="num"><button class="sort" data-sort="tvl_usd">TVL</button></th>
-          <th class="num"><button class="sort" data-sort="change_7d">7d</button></th>
-          <th class="num"><button class="sort" data-sort="implied_value_usd">Implied value</button></th>
-          <th><button class="sort" data-sort="multiple">Multiple</button></th>
-          <th>Farm</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
-    <p class="board-note" id="live-note" hidden>The live-token tab shows the 24 live-token protocols with the most TVL, with their recorded market cap beside the model’s implied value — so you can see where the model agrees and where it misses.</p>
-  </section>
-
-  <section class="sandbox" aria-label="Model sandbox">
-    <h2>Try the model yourself</h2>
-    <p>Move the sliders and the board recomputes live from the same formula. Reset puts the published board back.</p>
-    <div class="slider-row">
-      <label>Growth weight <output id="growth-weight-out">0.60</output>
-        <input id="growth-weight" type="range" min="0" max="1.5" step="0.05" value="0.6">
-      </label>
-      <label>Maturity floor <output id="maturity-floor-out">0.60</output>
-        <input id="maturity-floor" type="range" min="0.4" max="0.8" step="0.05" value="0.6">
-      </label>
-      <button id="reset-sandbox" type="button">Reset to published board</button>
-    </div>
-    <p class="sandbox-note" id="sandbox-note">Published board: growth weight 0.60, maturity floor 0.60.</p>
-  </section>
-
-  <section class="validation" aria-label="Validation">
-    <h2>How wrong is it? Out-of-sample validation</h2>
-    <p id="validation-note">Five-fold cross-validation on the 128 live-token protocols: each fold’s multiples were fitted without the protocols it predicts, so every prediction is genuinely out of sample. The model’s typical miss is about 4.6x — implied value ranks protocols, it does not price them.</p>
-    <table class="mini">
-      <thead><tr><th>Model</th><th class="num">Median |log10| error</th><th class="num">Within 2x</th><th class="num">Within 3x</th></tr></thead>
-      <tbody id="validation-rows"></tbody>
-    </table>
-    <p class="method-note">The current formula was kept because, of the variants tested — log-space medians, dropping the growth term, dropping the maturity term — it had the smallest out-of-sample median error.</p>
-  </section>
-
-  <section class="calibration" aria-label="Calibration">
-    <h2>Calibration: what each category’s tokens actually trade at</h2>
-    <p>For each category, the quartiles of its live-token protocols’ market-cap-to-TVL ratios (the middle half), the fitted multiple, and a trust level from the live sample size. Categories with fewer than three live protocols use the global median.</p>
-    <table class="mini">
-      <thead><tr><th>Category</th><th class="num">Live n</th><th class="num">Q1</th><th class="num">Median</th><th class="num">Q3</th><th class="num">Fitted multiple</th><th>Trust</th></tr></thead>
-      <tbody id="calibration-rows"></tbody>
-    </table>
-  </section>
-
-  <section class="how" aria-label="How the board is built">
-    <h2>How the board is built</h2>
-    <ol class="how-list">
-      <li><strong>Pre-token.</strong> A protocol is pre-token when its record carries no token at all: no market cap, no CoinGecko id, no symbol.</li>
-      <li><strong>Excluded.</strong> Wrapped, staked and bridged products of tokens that already trade, CEXs, versioned pools and exchange-named products are never ranked as launches. 198 protocols remain.</li>
-      <li><strong>Multiple.</strong> Each category’s multiple is the median market-cap-to-TVL ratio of the snapshot’s own live-token protocols in that category, shrunk toward the global median of 0.214x with five phantom protocols, clamped to 0.05x–0.60x.</li>
-      <li><strong>Growth.</strong> Seven-day TVL change, clamped to −50%…+100%, moves value by 0.6x its size.</li>
-      <li><strong>Maturity.</strong> A protocol earns from 0.60 at launch to 1.00 after three years without a token; unknown age counts as one year.</li>
-      <li><strong>Implied value.</strong> TVL × multiple × growth × maturity, rounded to the dollar. Rank 1 is the largest.</li>
-    </ol>
-    <p class="honesty">Say it plainly: a protocol on this board records no token — that is not proof it has none. And a high implied value is not a prediction that a token is coming, or when. Farm plans are a reader’s checklist, not advice; never pay anyone to claim for you.</p>
-  </section>
+  <table id="board">
+    <thead>
+      <tr>
+        <th data-sort="rank">#</th>
+        <th data-sort="name">Protocol</th>
+        <th data-sort="category">Category</th>
+        <th>Chains</th>
+        <th data-sort="tvl_usd">TVL</th>
+        <th data-sort="change_7d">7d</th>
+        <th data-sort="multiple">Multiple</th>
+        <th data-sort="implied_value_usd">Implied value</th>
+        <th data-sort="mcap_usd" class="live-only">Market cap</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <p id="empty" hidden>No protocols match these filters.</p>
 </main>
 
-<dialog id="detail" class="detail">
-  <form method="dialog" class="detail-form">
-    <button class="detail-close" aria-label="Close detail" value="close">×</button>
-  </form>
-  <h2 id="detail-title">—</h2>
-  <p id="detail-sub" class="detail-sub">—</p>
-  <div class="detail-grid">
-    <section class="detail-section" aria-label="Model breakdown">
-      <h3>Why this value</h3>
-      <dl id="detail-breakdown" class="breakdown"></dl>
-      <p class="sub" id="detail-recompute">—</p>
-      <p class="miss-line" id="detail-miss">—</p>
-    </section>
-    <section class="detail-section" aria-label="Farm plan">
-      <h3>Farm plan</h3>
-      <ol id="detail-plan" class="plan"></ol>
-    </section>
+<section class="tables">
+  <div>
+    <h2>Calibration</h2>
+    <p class="note">Category multiples from the 128 live-token protocols: the median market-cap-to-TVL ratio, shrunk toward the global median with five phantom protocols. Trust follows the live sample size.</p>
+    <table id="calib">
+      <thead><tr><th>Category</th><th>n</th><th>Multiple</th><th>Q1</th><th>Q3</th><th>Trust</th></tr></thead>
+      <tbody></tbody>
+    </table>
   </div>
-</dialog>
+  <div>
+    <h2>Validation</h2>
+    <p class="note">5-fold cross-validation on the 128 live-token protocols, folds fixed by slug hash. The model beats the global-median baseline out of sample — and still typically misses by about 4.6x. Implied value ranks; it does not price.</p>
+    <table id="valid">
+      <thead><tr><th>Fit</th><th>Median |log10| error</th><th>Within 2x</th><th>Within 3x</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
 
 <footer>
-  <p>Token Radar · radar-3-calibrated · Snapshot: DefiLlama, fetched 14 November 2026 · 758 protocols, 198 ranked · No network calls: this page runs entirely from its own files.</p>
+  <p>Snapshot: DefiLlama protocols, fetched 14 November 2026. A protocol is pre-token when its record carries no token at all: no market cap, no CoinGecko id, no symbol. Wrapped, staked and bridged products of tokens that already trade, CEXs, versioned pools and exchange-named products never rank as launches. Every row carries a farm plan; claim only from the protocol's own published link, never pay to claim.</p>
 </footer>
+
+<dialog id="detail">
+  <button class="close" id="closeDetail" type="button" aria-label="Close">✕</button>
+  <h2 id="dName">—</h2>
+  <p class="dsub" id="dSub">—</p>
+  <dl class="breakdown" id="dBreak"></dl>
+  <p class="note" id="dAgree">—</p>
+  <h3>Farm plan</h3>
+  <ol id="dFarm"></ol>
+  <p class="note">Typical miss ~4.6x: the implied value is a ranking signal, not a price. The plan's steps are general guidance, not financial advice.</p>
+</dialog>
 
 <script src="../data.js"></script>
 <script src="app.js"></script>
